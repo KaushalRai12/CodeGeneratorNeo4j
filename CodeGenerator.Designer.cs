@@ -28,18 +28,34 @@
         /// </summary>
         private void InitializeComponent()
         {
+            btnTestConnection = new Button();
+        
             SuspendLayout();
             // 
-            // CodeGenerator
+            // btnTestConnection
             // 
+            btnTestConnection.Location = new Point(226, 340);
+            btnTestConnection.Name = "btnTestConnection";
+            btnTestConnection.Size = new Size(160, 23);
+            btnTestConnection.TabIndex = 0;
+            btnTestConnection.Text = "TestConnection";
+            btnTestConnection.UseVisualStyleBackColor = true;
+            btnTestConnection.Click += btnTestConnection_Click;
+           
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1043, 543);
+          
+            Controls.Add(btnTestConnection);
             Name = "CodeGenerator";
             Text = "CodeGenerator";
             ResumeLayout(false);
         }
 
         #endregion
+
+
+        private Button btnTestConnection;
+        
     }
 }
