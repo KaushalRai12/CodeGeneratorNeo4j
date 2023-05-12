@@ -3,6 +3,7 @@ using Neo4j.Driver;
 using System.Configuration;
 using System.Globalization;
 using System.Text;
+using System.Text.Json;
 
 namespace CodeGeneratorNeo4j
 {
@@ -89,6 +90,7 @@ namespace CodeGeneratorNeo4j
                         classDefinition = classDefinition.Replace("list of STRING", "List<string>");
                         classDefinition = classDefinition.Replace("public DATE", "DateTime");
                         classDefinition = classDefinition.Replace("BOOLEAN", "bool");
+                        classDefinition = classDefinition.Replace("FLOAT", "float");
                         classDefinitions[label] = classDefinition;
                     }
                 }
@@ -129,6 +131,8 @@ namespace CodeGeneratorNeo4j
             string neo4jInterface = GenerateSignatureForIneo4jInterface(txtCodeSection.Text);
             string neo4jService = GenerateFunctionForNeo4jService(input);
             string controllerMethod = GenerateControllerMethod(input);
+            string programCSIntegration = GenerateCodeForProgramCS();
+            string appsettingsJson = GenerateappsettingsJson();
 
             using (var folderDialog = new FolderBrowserDialog())
             {
@@ -154,6 +158,10 @@ namespace CodeGeneratorNeo4j
                     File.WriteAllText(Path.Combine(outputDir, "Neo4jService.cs"), neo4jService);
 
                     File.WriteAllText(Path.Combine(outputDir, "Controller.cs"), controllerMethod);
+
+                    File.WriteAllText(Path.Combine(outputDir, "Program.cs"), programCSIntegration);
+
+                    File.WriteAllText(Path.Combine(outputDir, "appsettings.json"), appsettingsJson);
 
                     MessageBox.Show("Files have been written successfully.");
                 }
@@ -218,7 +226,6 @@ namespace CodeGeneratorNeo4j
                         property = $"public string[] {key} {{ get; set; }}";
                     }
                 }
-
                 if (property != "")
                 {
                     className += $"{property}{Environment.NewLine}";
@@ -289,25 +296,25 @@ namespace CodeGeneratorNeo4j
 
             functionBody += @"IAsyncSession session = _driver.AsyncSession();
 
-        try
-        {
-            var createdNode = await session.WriteTransactionAsync(async tx =>
+            try
             {
-                var r = await tx.RunAsync(query, parameters);
-                var record = await r.PeekAsync();
-                return record[0].As<INode>();
-            });
-
-            return ConvertNodeTo" + className + @"(createdNode);
+                var createdNode = await session.WriteTransactionAsync(async tx =>
+                {
+                    var r = await tx.RunAsync(query, parameters);
+                    var record = await r.PeekAsync();
+                    return record[0].As<INode>();
+                });
+    
+                return ConvertNodeTo" + className + @"(createdNode);
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
         }
-        finally
+    
+        private " + className + @" ConvertNodeTo" + className + @"(INode node)
         {
-            await session.CloseAsync();
-        }
-    }
-
-    private " + className + @" ConvertNodeTo" + className + @"(INode node)
-    {
         return new " + className + Environment.NewLine + "{" + Environment.NewLine;
 
             foreach (string line in lines.Skip(1))
@@ -358,5 +365,46 @@ namespace CodeGeneratorNeo4j
 
             return output.ToString();
         }
+
+        public string GenerateCodeForProgramCS()
+        {
+            string programcsIntegration = @"/* Added for neo4j */
+            builder.Services.AddSingleton(x => GraphDatabase.Driver(
+            builder.Configuration.GetConnectionString(""Neo4j""),
+            AuthTokens.Basic(
+            builder.Configuration[""Neo4j:Username""],
+            builder.Configuration[""Neo4j:Password""])));
+
+            builder.Services.AddScoped<INeo4jService, Neo4jService>();
+            /* End of Neo4j configuration */";
+            return programcsIntegration;
+
+        }
+       
+        public string GenerateappsettingsJson()
+        {
+            string jsonString = @"
+                {
+                  ""Logging"": {
+                    ""LogLevel"": {
+                      ""Default"": ""Information"",
+                      ""Microsoft.AspNetCore"": ""Warning""
+                    }
+                  },
+                  ""AllowedHosts"": ""*"",
+                  ""Neo4j"": {
+                    ""Url"": ""neo4j+s://d8b4989b.databases.neo4j.io"",
+                    ""Username"": ""neo4j"",
+                    ""Password"": ""VESdE_y2-k1Cg9RvWFlAPTiFJZBTQNKpnct9D5Curkk""
+                  }
+                }";
+
+            JsonDocument document = JsonDocument.Parse(jsonString);
+
+            string prettyJson = JsonSerializer.Serialize(document, new JsonSerializerOptions { WriteIndented = true });
+            return prettyJson;
+            
+        }
+
     }
 }
