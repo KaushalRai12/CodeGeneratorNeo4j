@@ -84,7 +84,7 @@ namespace CodeGeneratorNeo4j
                     {
                         classDefinition = classDefinition.Replace("INTEGER", "int");
                         classDefinition = classDefinition.Replace("STRING", "string");
-                        classDefinition = classDefinition.Replace("list of STRING", "List<string>");
+                        classDefinition = classDefinition.Replace("list of string", "List<string>");
                         classDefinition = classDefinition.Replace("public date", "DateTime");
                         classDefinition = classDefinition.Replace("boolean", "bool");
                         classDefinitions[label] = classDefinition;
@@ -101,10 +101,12 @@ namespace CodeGeneratorNeo4j
                     {
                         if (folderDialog.ShowDialog() == DialogResult.OK)
                         {
+                            txtOutput.Clear(); // Clear previous output
                             foreach (var pair in classDefinitions)
                             {
                                 string filePath = Path.Combine(folderDialog.SelectedPath, pair.Key + ".cs");
                                 File.WriteAllText(filePath, pair.Value);
+                                txtOutput.Text += $"{pair.Value}\n\n"; // Display class definitions
                             }
 
                             MessageBox.Show("Class definitions have been written to files.", "Output", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -117,6 +119,7 @@ namespace CodeGeneratorNeo4j
                 MessageBox.Show($"Error generating classes: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
 
 
     }
