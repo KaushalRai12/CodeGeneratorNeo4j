@@ -52,10 +52,11 @@ namespace CodeGeneratorNeo4j
             try
             {
                 using var session = driver.AsyncSession();
+                txtQuery.Text += cypherQueryLabels + Environment.NewLine;  // Display the query
                 var labelsResult = await session.RunAsync(cypherQueryLabels);
                 var labels = await labelsResult.ToListAsync(record => record[0].As<string>());
 
-                var classDefinitions = new List<string>();
+                var classDefinitions = new Dictionary<string, string>();
 
                 foreach (string label in labels)
                 {
@@ -74,6 +75,7 @@ namespace CodeGeneratorNeo4j
                             acc + ""    public "" + propWithType[1] + "" "" + propWithType[0] + "" { get; set; }"") + ""}"" AS class_definition
                         RETURN class_definition";
 
+                    txtQuery.Text += cypherQuery + Environment.NewLine;  // Display the query
                     var result = await session.RunAsync(cypherQuery, queryParams);
                     var records = await result.ToListAsync(record => record[0].As<string>());
                     var classDefinition = records.SingleOrDefault();
@@ -82,10 +84,10 @@ namespace CodeGeneratorNeo4j
                     {
                         classDefinition = classDefinition.Replace("INTEGER", "int");
                         classDefinition = classDefinition.Replace("STRING", "string");
-                        classDefinition = classDefinition.Replace("list of string", "List<string>");
+                        classDefinition = classDefinition.Replace("list of STRING", "List<string>");
                         classDefinition = classDefinition.Replace("public date", "DateTime");
                         classDefinition = classDefinition.Replace("boolean", "bool");
-                        classDefinitions.Add(classDefinition);
+                        classDefinitions[label] = classDefinition;
                     }
                 }
 
@@ -95,9 +97,19 @@ namespace CodeGeneratorNeo4j
                 }
                 else
                 {
-                    string output = string.Join("\n\n", classDefinitions);
-                    // Assuming you have a TextBox named txtOutput
-                    txtOutput.Text = output;
+                    using (var folderDialog = new FolderBrowserDialog())
+                    {
+                        if (folderDialog.ShowDialog() == DialogResult.OK)
+                        {
+                            foreach (var pair in classDefinitions)
+                            {
+                                string filePath = Path.Combine(folderDialog.SelectedPath, pair.Key + ".cs");
+                                File.WriteAllText(filePath, pair.Value);
+                            }
+
+                            MessageBox.Show("Class definitions have been written to files.", "Output", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -105,6 +117,7 @@ namespace CodeGeneratorNeo4j
                 MessageBox.Show($"Error generating classes: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
 
     }
 }
