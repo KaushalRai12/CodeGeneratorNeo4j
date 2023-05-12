@@ -32,6 +32,8 @@
             btnGenerateClasses = new Button();
             txtOutput = new TextBox();
             txtQuery = new TextBox();
+            txtCodeSection = new TextBox();
+            GenerateCode = new Button();
             SuspendLayout();
             // 
             // btnTestConnection
@@ -56,7 +58,7 @@
             // 
             // txtOutput
             // 
-            txtOutput.Location = new Point(549, 12);
+            txtOutput.Location = new Point(443, 12);
             txtOutput.Multiline = true;
             txtOutput.Name = "txtOutput";
             txtOutput.Size = new Size(687, 472);
@@ -67,14 +69,34 @@
             txtQuery.Location = new Point(24, 21);
             txtQuery.Multiline = true;
             txtQuery.Name = "txtQuery";
-            txtQuery.Size = new Size(494, 463);
+            txtQuery.Size = new Size(413, 463);
             txtQuery.TabIndex = 3;
+            // 
+            // txtCodeSection
+            // 
+            txtCodeSection.Location = new Point(1152, 12);
+            txtCodeSection.Multiline = true;
+            txtCodeSection.Name = "txtCodeSection";
+            txtCodeSection.Size = new Size(536, 472);
+            txtCodeSection.TabIndex = 4;
+            // 
+            // GenerateCode
+            // 
+            GenerateCode.Location = new Point(1282, 526);
+            GenerateCode.Name = "GenerateCode";
+            GenerateCode.Size = new Size(75, 23);
+            GenerateCode.TabIndex = 5;
+            GenerateCode.Text = "GenerateCode";
+            GenerateCode.UseVisualStyleBackColor = true;
+            GenerateCode.Click += GenerateCode_Click;
             // 
             // CodeGenerator
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1290, 660);
+            ClientSize = new Size(1742, 660);
+            Controls.Add(GenerateCode);
+            Controls.Add(txtCodeSection);
             Controls.Add(txtQuery);
             Controls.Add(txtOutput);
             Controls.Add(btnGenerateClasses);
@@ -92,5 +114,7 @@
         private Button btnGenerateClasses;
         private TextBox txtOutput;
         private TextBox txtQuery;
+        private TextBox txtCodeSection;
+        private Button GenerateCode;
     }
 }
