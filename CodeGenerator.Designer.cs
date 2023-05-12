@@ -82,9 +82,9 @@
             // 
             // GenerateCode
             // 
-            GenerateCode.Location = new Point(1282, 526);
+            GenerateCode.Location = new Point(1152, 508);
             GenerateCode.Name = "GenerateCode";
-            GenerateCode.Size = new Size(75, 23);
+            GenerateCode.Size = new Size(178, 23);
             GenerateCode.TabIndex = 5;
             GenerateCode.Text = "GenerateCode";
             GenerateCode.UseVisualStyleBackColor = true;
