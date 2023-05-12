@@ -29,33 +29,68 @@
         private void InitializeComponent()
         {
             btnTestConnection = new Button();
-        
+            btnGenerateClasses = new Button();
+            txtOutput = new TextBox();
+            txtQuery = new TextBox();
             SuspendLayout();
             // 
             // btnTestConnection
             // 
-            btnTestConnection.Location = new Point(226, 340);
+            btnTestConnection.Location = new Point(12, 508);
             btnTestConnection.Name = "btnTestConnection";
             btnTestConnection.Size = new Size(160, 23);
             btnTestConnection.TabIndex = 0;
             btnTestConnection.Text = "TestConnection";
             btnTestConnection.UseVisualStyleBackColor = true;
             btnTestConnection.Click += btnTestConnection_Click;
-           
+            // 
+            // btnGenerateClasses
+            // 
+            btnGenerateClasses.Location = new Point(204, 508);
+            btnGenerateClasses.Name = "btnGenerateClasses";
+            btnGenerateClasses.Size = new Size(198, 23);
+            btnGenerateClasses.TabIndex = 1;
+            btnGenerateClasses.Text = "Generate Classes";
+            btnGenerateClasses.UseVisualStyleBackColor = true;
+            btnGenerateClasses.Click += btnGenerateClasses_Click;
+            // 
+            // txtOutput
+            // 
+            txtOutput.Location = new Point(549, 12);
+            txtOutput.Multiline = true;
+            txtOutput.Name = "txtOutput";
+            txtOutput.Size = new Size(687, 472);
+            txtOutput.TabIndex = 2;
+            // 
+            // txtQuery
+            // 
+            txtQuery.Location = new Point(24, 21);
+            txtQuery.Multiline = true;
+            txtQuery.Name = "txtQuery";
+            txtQuery.Size = new Size(494, 463);
+            txtQuery.TabIndex = 3;
+            // 
+            // CodeGenerator
+            // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1043, 543);
-          
+            ClientSize = new Size(1290, 660);
+            Controls.Add(txtQuery);
+            Controls.Add(txtOutput);
+            Controls.Add(btnGenerateClasses);
             Controls.Add(btnTestConnection);
             Name = "CodeGenerator";
             Text = "CodeGenerator";
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
 
 
         private Button btnTestConnection;
-        
+        private Button btnGenerateClasses;
+        private TextBox txtOutput;
+        private TextBox txtQuery;
     }
 }
